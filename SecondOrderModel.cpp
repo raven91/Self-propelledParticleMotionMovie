@@ -14,7 +14,9 @@ SecondOrderModel::SecondOrderModel() :
     number_of_state_variables_(4),
     system_state_(number_of_particles_ * number_of_state_variables_),
     number_of_reduced_state_variables_(3),
-    reduced_system_state_for_renderer_(number_of_particles_ * number_of_reduced_state_variables_)
+    reduced_system_state_for_renderer_(number_of_particles_ * number_of_reduced_state_variables_),
+    x_size_(1.0),
+    y_size_(1.0)
 {
   folder_ = "/Volumes/Kruk/spss/spssLangevinIntegration/parameter_scan_1000_sigma1/";
 //  folder_ = "/Users/nikita/Documents/Projects/spss/spssLangevinIntegration/";
@@ -80,17 +82,17 @@ int SecondOrderModel::GetNumberOfStateVariables() const
   return number_of_reduced_state_variables_;
 }
 
-void SecondOrderModel::ApplyPeriodicBoundaryConditions(Real box_size)
+void SecondOrderModel::ApplyPeriodicBoundaryConditions()
 {
-  static const float x_size = box_size, y_size = box_size, phi_size = 2.0 * M_PI;
-  static const float x_rsize = 1.0f / x_size, y_rsize = 1.0f / y_size, phi_rsize = 1.0f / phi_size;
+  static const float phi_size = 2.0 * M_PI;
+  static const float x_rsize = 1.0f / x_size_, y_rsize = 1.0f / y_size_, phi_rsize = 1.0f / phi_size;
 
 #pragma unroll
   for (int i = 0; i < number_of_particles_; ++i)
   {
     int ii = i * number_of_state_variables_;
-    system_state_[ii] -= std::floorf(system_state_[ii] * x_rsize) * x_size;
-    system_state_[ii + 1] -= std::floorf(system_state_[ii + 1] * y_rsize) * y_size;
+    system_state_[ii] -= std::floorf(system_state_[ii] * x_rsize) * x_size_;
+    system_state_[ii + 1] -= std::floorf(system_state_[ii + 1] * y_rsize) * y_size_;
     system_state_[ii + 2] -= std::floor(system_state_[ii + 2] * phi_rsize) * phi_size;
   } // i
 
@@ -102,4 +104,14 @@ void SecondOrderModel::ApplyPeriodicBoundaryConditions(Real box_size)
     reduced_system_state_for_renderer_[number_of_reduced_state_variables_ * i + 2] = system_state_[ii + 2];
 //    reduced_system_state_for_renderer_[number_of_reduced_state_variables_ * i + 2] = (system_state_[ii + 3]);
   } // i
+}
+
+Real SecondOrderModel::GetXSize() const
+{
+  return x_size_;
+}
+
+Real SecondOrderModel::GetYSize() const
+{
+  return y_size_;
 }

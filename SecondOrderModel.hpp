@@ -25,7 +25,9 @@ class SecondOrderModel : public Model
   virtual const std::vector<Real> &GetCurrentState();
   virtual int GetNumberOfParticles() const;
   virtual int GetNumberOfStateVariables() const;
-  virtual void ApplyPeriodicBoundaryConditions(Real box_size);
+  virtual void ApplyPeriodicBoundaryConditions();
+  virtual Real GetXSize() const;
+  virtual Real GetYSize() const;
 
  private:
 
@@ -37,6 +39,8 @@ class SecondOrderModel : public Model
   std::vector<Real> reduced_system_state_for_renderer_;
   std::string folder_;
   std::string file_name_;
+  Real x_size_;
+  Real y_size_;
 
 };
 

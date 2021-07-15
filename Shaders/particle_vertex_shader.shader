@@ -4,7 +4,8 @@ in vec2 position;
 in vec3 color_into_vertex_shader;
 in int trajectory_index;
 
-uniform int system_size;
+uniform float x_size;
+uniform float y_size;
 uniform float x_shift;
 uniform float y_shift;
 uniform float z_scale;
@@ -21,8 +22,8 @@ void main()
 	translate[3] = vec4(-1.0, -1.0, 0.0, 1.0);
 	
 	mat4 scale = mat4(1.0);
-	scale[0][0] = 2.0 / system_size;
-	scale[1][1] = 2.0 / system_size;
+	scale[0][0] = 2.0 / x_size;
+	scale[1][1] = 2.0 / y_size;
 
 	mat4 external_translate = mat4(1.0);
 	external_translate[3] = vec4(x_shift, y_shift, 0.0f, 1.0f);

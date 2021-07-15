@@ -28,11 +28,10 @@ int Renderer::frame_speed_ = 1; // 1 - the basic frame rate
 GLfloat Renderer::x_shift_ = 0.0f;
 GLfloat Renderer::y_shift_ = 0.0f;
 GLfloat Renderer::z_scale_ = 1.0f;
-int Renderer::t_start_ = 0 * 100;
+int Renderer::t_start_ = 0;
 bool Renderer::show_time_ = true;
 Real Renderer::time_stamp_to_show_ = 0.0f;
 int Renderer::number_of_points_per_particle_ = 1; // should be consistent with ParticleRepresentationType
-int Renderer::system_size_ = 1;
 int Renderer::number_of_color_components_ = 3;
 ParticleRepresentationType Renderer::particle_representation_type_ = ParticleRepresentationType::kPointMass;
 
@@ -246,7 +245,8 @@ void Renderer::InitShaders(GLuint *shader_program)
 
   // shader parameters must be initialized when the respective shader is active
   SetShaderParameter(shader_program[1], (GLint) number_of_points_per_particle_, "kPointsPerParticle");
-  SetShaderParameter(shader_program[1], (GLint) system_size_, "system_size");
+  SetShaderParameter(shader_program[1], (GLfloat) model_->GetXSize(), "x_size");
+  SetShaderParameter(shader_program[1], (GLfloat) model_->GetYSize(), "y_size");
   SetShaderParameter(shader_program[1], (GLfloat) z_scale_, "z_scale");
 
   shader_program[2]
@@ -342,7 +342,7 @@ void Renderer::InitializeSystemState()
   for (int n = 0; n < number_of_points_per_particle_; ++n)
   {
     model_->ReadNewState(time_stamp_to_show_);
-    model_->ApplyPeriodicBoundaryConditions((Real) system_size_);
+    model_->ApplyPeriodicBoundaryConditions();
     system_state_over_time_interval_.push_back(model_->GetCurrentState());
 
     /*std::vector<std::vector<int>> linked_list;
@@ -414,7 +414,7 @@ void Renderer::ReadNewState()
   if (!stop_flag_ || !pause_flag_)
   {
     model_->ReadNewState(time_stamp_to_show_);
-    model_->ApplyPeriodicBoundaryConditions((Real) system_size_);
+    model_->ApplyPeriodicBoundaryConditions();
     system_state_over_time_interval_.push_back(model_->GetCurrentState());
     system_state_over_time_interval_.pop_front();
 

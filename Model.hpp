@@ -23,7 +23,9 @@ class Model
   virtual const std::vector<Real> &GetCurrentState() = 0;
   virtual int GetNumberOfParticles() const = 0;
   virtual int GetNumberOfStateVariables() const = 0;
-  virtual void ApplyPeriodicBoundaryConditions(Real box_size) = 0;
+  virtual void ApplyPeriodicBoundaryConditions() = 0;
+  virtual Real GetXSize() const = 0;
+  virtual Real GetYSize() const = 0;
 
 };
 

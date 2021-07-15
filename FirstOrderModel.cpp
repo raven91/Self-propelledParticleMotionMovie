@@ -13,11 +13,15 @@ FirstOrderModel::FirstOrderModel() :
     Model(),
     number_of_particles_(10000),
     number_of_state_variables_(3),
-    system_state_(number_of_particles_ * number_of_state_variables_)
+    system_state_(number_of_particles_ * number_of_state_variables_),
+    x_size_(100),
+    y_size_(100)
 {
   folder_ = "/Users/nikita/Documents/Projects/spc2/spc2OdeIntegration/";
 //  folder_ = "/Volumes/Kruk/spc2/spc2OdeIntegration/continued/";
   file_name_ = folder_ + "v0_1_sigma_1_rho_0.01_alpha_0_Dphi_0.01_N_" + std::to_string(number_of_particles_) + "_0_0.bin";
+  file_name_ = folder_
+      + "v0_1_sigma_1_rho_1_V0_0_Dphi_0.5_N_" + std::to_string(number_of_particles_) + "_rho0_0.5_0.bin";
   data_file_.open(file_name_, std::ios::binary | std::ios::in);
   assert(data_file_.is_open());
 }
@@ -69,16 +73,25 @@ int FirstOrderModel::GetNumberOfStateVariables() const
   return number_of_state_variables_;
 }
 
-void FirstOrderModel::ApplyPeriodicBoundaryConditions(Real box_size)
+void FirstOrderModel::ApplyPeriodicBoundaryConditions()
 {
-  static const float x_size = box_size, y_size = box_size;
-  static const float x_rsize = 1.0f / x_size, y_rsize = 1.0f / y_size;
+  static const float x_rsize = 1.0f / x_size_, y_rsize = 1.0f / y_size_;
 
 #pragma unroll
   for (int i = 0; i < number_of_particles_; ++i)
   {
     int ii = i * number_of_state_variables_;
-    system_state_[ii] -= std::floorf(system_state_[ii] * x_rsize) * x_size;
-    system_state_[ii + 1] -= std::floorf(system_state_[ii + 1] * y_rsize) * y_size;
+    system_state_[ii] -= std::floorf(system_state_[ii] * x_rsize) * x_size_;
+    system_state_[ii + 1] -= std::floorf(system_state_[ii + 1] * y_rsize) * y_size_;
   } // i
+}
+
+Real FirstOrderModel::GetXSize() const
+{
+  return x_size_;
+}
+
+Real FirstOrderModel::GetYSize() const
+{
+  return y_size_;
 }

@@ -45,7 +45,6 @@ class Renderer
   static bool show_time_;
   static Real time_stamp_to_show_;
   static int number_of_points_per_particle_;
-  static int system_size_;
   static int number_of_color_components_; // RGB | Alpha is implemented in the shaders
   static ParticleRepresentationType particle_representation_type_;
   FT_Library ft_; // FreeType library object
